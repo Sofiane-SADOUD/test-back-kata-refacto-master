@@ -5,7 +5,7 @@ namespace Template\Repository;
 use Template\Entity\Destination;
 use Faker;
 
-class DestinationRepository implements Repository
+class DestinationRepository implements RepositoryInterface
 {
     use \Template\Helper\SingletonTrait;
 

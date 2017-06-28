@@ -6,7 +6,7 @@ use Faker;
 use \DateTime;
 use Template\Entity\Quote;
 
-class QuoteRepository implements Repository
+class QuoteRepository implements RepositoryInterface
 {
     use \Template\Helper\SingletonTrait;
 

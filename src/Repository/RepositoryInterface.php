@@ -2,7 +2,7 @@
 
 namespace Template\Repository;
 
-interface Repository
+interface RepositoryInterface
 {
     public function getById($id);
 }
