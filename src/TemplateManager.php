@@ -1,5 +1,14 @@
 <?php
 
+namespace Template;
+
+use Template\Entity\Quote;
+use Template\Entity\Template;
+use Template\Context\ApplicationContext;
+use Template\Repository\QuoteRepository;
+use Template\Repository\SiteRepository;
+use Template\Repository\DestinationRepository;
+
 class TemplateManager
 {
     public function getTemplateComputed(Template $tpl, array $data)

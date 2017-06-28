@@ -1,8 +1,13 @@
 <?php
 
+namespace Template\Repository;
+
+use Template\Entity\Site;
+use Faker;
+
 class SiteRepository implements Repository
 {
-    use SingletonTrait;
+    use \Template\Helper\SingletonTrait;
 
     private $url;
 

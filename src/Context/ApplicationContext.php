@@ -1,8 +1,13 @@
 <?php
 
+namespace Template\Context;
+
+use Template\Entity\Site;
+use Template\Entity\User;
+
 class ApplicationContext
 {
-    use SingletonTrait;
+    use \Template\Helper\SingletonTrait;
 
     /**
      * @var Site

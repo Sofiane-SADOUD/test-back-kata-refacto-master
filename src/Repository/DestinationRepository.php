@@ -1,8 +1,13 @@
 <?php
 
+namespace Template\Repository;
+
+use Template\Entity\Destination;
+use Faker;
+
 class DestinationRepository implements Repository
 {
-    use SingletonTrait;
+    use \Template\Helper\SingletonTrait;
 
     private $country;
     private $conjunction;
