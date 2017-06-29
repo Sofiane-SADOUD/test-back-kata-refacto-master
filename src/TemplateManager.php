@@ -12,6 +12,13 @@ use Template\Entity\User;
 
 class TemplateManager
 {
+    /**
+     * Get populated $template with $data
+     * @param Template $template
+     * @param array $data
+     * @throws \RuntimeException
+     * @return \Template\Entity\Template
+     */
     public function getTemplateComputed(Template $template, array $data)
     {
         if (!$template) {
@@ -19,31 +26,40 @@ class TemplateManager
         }
 
         $replacedTemplate = clone($template);
-        $replacedTemplate->subject = $this->computeText($replacedTemplate->subject, $data);
-        $replacedTemplate->content = $this->computeText($replacedTemplate->content, $data);
+        $replacedTemplate->subject = $this->replacePatternsWithData($replacedTemplate->subject, $data);
+        $replacedTemplate->content = $this->replacePatternsWithData($replacedTemplate->content, $data);
 
         return $replacedTemplate;
     }
 
-    private function computeText($text, array $data)
+    /**
+     * Replacing patterns in given $text by $data
+     * @param string $text
+     * @param array $data
+     * @return string
+     */
+    private function replacePatternsWithData($text, array $data)
     {
-        $quote = (isset($data['quote']) and $data['quote'] instanceof Quote) ? $data['quote'] : null;
-
-        if ($quote) {
-            $text = $this->computeQuote($quote, $text);
+        if (isset($data['quote']) && $data['quote'] instanceof Quote) {
+            $text = $this->replaceQuotePatterns($data['quote'], $text);
         }
 
-
-        $user  = (isset($data['user'])  and ($data['user']  instanceof User))  ? $data['user']  : ApplicationContext::getInstance()->getCurrentUser();
+        $user  = (isset($data['user'])  && ($data['user']  instanceof User)) ? $data['user'] : ApplicationContext::getInstance()->getCurrentUser();
 
         if ($user) {
-            $text = $this->computeUser($user, $text);
+            $text = $this->replaceUserPatterns($user, $text);
         }
 
         return $text;
     }
 
-    private function computeQuote(Quote $quote, $text)
+    /**
+     * Replacing patterns in $text with $quote data
+     * @param Quote $quote
+     * @param string $text
+     * @return string
+     */
+    private function replaceQuotePatterns(Quote $quote, $text)
     {
         $quoteFromRepository = QuoteRepository::getInstance()->getById($quote->id);
         $siteFromRepository = SiteRepository::getInstance()->getById($quote->siteId);
@@ -51,10 +67,8 @@ class TemplateManager
 
         // Replace quote:destination_link
         if (strpos($text, '[quote:destination_link]') !== false) {
-            $destination = DestinationRepository::getInstance()->getById($quote->destinationId);
-
-            if ($destination) {
-                $text = str_replace('[quote:destination_link]', $siteFromRepository->url . '/' . $destination->countryName . '/quote/' . $quoteFromRepository->id, $text);
+            if ($destinationFromRepository) {
+                $text = str_replace('[quote:destination_link]', $siteFromRepository->url . '/' . $destinationFromRepository->countryName . '/quote/' . $quoteFromRepository->id, $text);
             } else {
                 $text = str_replace('[quote:destination_link]', '', $text);
             }
@@ -72,17 +86,31 @@ class TemplateManager
 
         // Replace quote:destination_name
         if (strpos($text, '[quote:destination_name]') !== false) {
-            $text = str_replace('[quote:destination_name]', $destinationFromRepository->countryName, $text);
+            $countryName = !empty($destinationFromRepository->countryName) ? $destinationFromRepository->countryName : '';
+            $text = str_replace('[quote:destination_name]', $countryName, $text);
         }
 
         return $text;
     }
 
-    private function computeUser(User $user, $text)
+    /**
+     * Replacing patterns in $text with $user data
+     * @param User $user
+     * @param string $text
+     * @return string
+     */
+    private function replaceUserPatterns(User $user, $text)
     {
-        // replace user info
+        // replace user first_name
         if (strpos($text, '[user:first_name]') !== false) {
-            $text = str_replace('[user:first_name]', ucfirst(mb_strtolower($user->firstname)), $text);
+            $firstname = !empty($user->firstname) ? ucfirst(mb_strtolower($user->firstname)) : '';
+            $text = str_replace('[user:first_name]', $firstname, $text);
+        }
+
+        // replace user last_name
+        if (strpos($text, '[user:last_name]') !== false) {
+            $lastname = !empty($user->lastname) ? mb_strtoupper($user->lastname) : '';
+            $text = str_replace('[user:last_name]', $lastname, $text);
         }
 
         return $text;
