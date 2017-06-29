@@ -23,9 +23,9 @@ class TemplateManagerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @test
+     * @testGetTemplateComputed
      */
-    public function test()
+    public function testGetTemplateComputed()
     {
         $faker = \Faker\Factory::create();
 
