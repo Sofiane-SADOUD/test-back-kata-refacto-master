@@ -27,7 +27,6 @@ class TemplateManager
 
     private function computeText($text, array $data)
     {
-
         $quote = (isset($data['quote']) and $data['quote'] instanceof Quote) ? $data['quote'] : null;
 
         if ($quote) {
@@ -37,7 +36,7 @@ class TemplateManager
 
         $user  = (isset($data['user'])  and ($data['user']  instanceof User))  ? $data['user']  : ApplicationContext::getInstance()->getCurrentUser();
 
-        if($user) {
+        if ($user) {
             $text = $this->computeUser($user, $text);
         }
 
@@ -51,7 +50,7 @@ class TemplateManager
         $destinationFromRepository = DestinationRepository::getInstance()->getById($quote->destinationId);
 
         // Replace quote:destination_link
-        if(strpos($text, '[quote:destination_link]') !== false) {
+        if (strpos($text, '[quote:destination_link]') !== false) {
             $destination = DestinationRepository::getInstance()->getById($quote->destinationId);
 
             if ($destination) {
